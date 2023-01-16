@@ -1,9 +1,30 @@
 import requests
-from bs4 import BeautifulSoup
 import csv
-from itertools import zip_longest
+from bs4 import BeautifulSoup
 
-result = requests.get("https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html")
+url = "https://www.upwork.com/hire/java-developers/"
 
-src = result.content
-print(src)
+response = requests.get(url)
+
+soup = BeautifulSoup(response.text, "html.parser")
+
+freelancers = soup.find_all("div", {"class": "o-card"})
+
+with open("freelancers.csv", "w", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow(["Freelancer Name", "Freelancer Title", "Freelancer Description"])
+    for freelancer in freelancers:
+
+        #h4 ellipsis no-modal mb-0
+        name = soup.find("div", {"class": "h4 ellipsis no-modal mb-0"}).text
+        title = freelancer.find("p", {"class": "o-card__subtitle"}).text
+        description = freelancer.find("p", {"class": "o-card__description"}).text
+        writer.writerow([name, title, description])
+
+print("Done!")
+
+
+'''
+        price = soup.find("p", {"class": "price_color"}).text
+        availability = soup.find("p", {"class": ...
+'''
